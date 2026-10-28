@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Solo2Squad - Plan smarter. Travel together.</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="trip.css" />
+    <link rel="stylesheet" href="ecosystem.css" />
+    <link rel="stylesheet" href="holiday.css" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  </head>
+  <body class="t">
+    <header class="nav" id="nav"></header>
+    <main>
+      <section class="hx" aria-label="Introduction">
+        <div class="photo" role="img" aria-label="Mountain valley at sunrise">
+          <div class="in">
+            <span class="tag">Group travel, planned properly</span>
+            <h1>Plan smarter.<br />Travel together.</h1>
+            <p>
+              Compare self-planned travel with curated packages, build your
+              squad, and manage the entire journey in one place.
+            </p>
+            <a class="btn" href="trips.html">Explore trips</a
+            ><a class="btn ghost" href="create-trip.html">Plan a trip</a>
+          </div>
+          <a class="fcard" href="trips.html?q=Manali"
+            ><img
+              src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&q=70"
+              alt=""
+              loading="lazy"
+            /><small>Featured destination</small
+            ><b>Manali, Himachal Pradesh</b></a
+          >
+        </div>
+        <form
+          class="sbar"
+          action="trips.html"
+          method="get"
+          role="search"
+          aria-label="Find a trip"
+        >
+          <label
+            >Destination<input
+              name="q"
+              placeholder="Where to?"
+              autocomplete="off"
+          /></label>
+          <label>From date<input name="date" type="date" /></label>
+          <label
+            >Travelers<input
+              name="n"
+              type="number"
+              min="1"
+              max="20"
+              placeholder="Group size"
+          /></label>
+          <button class="btn" type="submit">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M21 21l-4.3-4.3M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16"
+              /></svg
+            >Search
+          </button>
+        </form>
+        <div class="stats">
+          <div>
+            <b>3 ways</b
+            ><span>Self plan and two packages compared on every trip</span>
+          </div>
+          <div>
+            <b>Up to 20</b
+            ><span>Travelers per squad, with capacity enforced</span>
+          </div>
+          <div>
+            <b>1 chat</b><span>Private to each squad, members only</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap sec" aria-labelledby="hw">
+        <div class="eyebrow">How it works</div>
+        <h2 id="hw">From solo idea to coordinated trip</h2>
+        <p class="sub">One trip. One plan. One squad.</p>
+        <div class="fcards">
+          <div class="fc">
+            <div class="ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M21 21l-4.3-4.3M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16" />
+              </svg>
+            </div>
+            <h3>Discover</h3>
+            <p>Find trips by destination, date, budget and open spots.</p>
+          </div>
+          <div class="fc">
+            <div class="ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 3v18M5 7h14M5 7l-3 8a4 4 0 0 0 6 0zM19 7l-3 8a4 4 0 0 0 6 0z"
+                />
+              </svg>
+            </div>
+            <h3>Compare</h3>
+            <p>Self plan against packages, with the reasoning shown.</p>
+          </div>
+          <div class="fc">
+            <div class="ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"
+                />
+              </svg>
+            </div>
+            <h3>Build the squad</h3>
+            <p>Request to join. Organizers accept, and capacity is enforced.</p>
+          </div>
+          <div class="fc">
+            <div class="ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z" />
+              </svg>
+            </div>
+            <h3>Coordinate</h3>
+            <p>Itinerary, shared expenses and a private chat for your squad.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap sec" aria-labelledby="hd">
+        <div class="eyebrow">Popular destinations</div>
+        <h2 id="hd">Where squads are heading</h2>
+        <p class="sub">Pick a destination to see open trips.</p>
+        <div class="dests">
+          <a
+            class="dest"
+            href="trips.html?q=Manali"
+            style="
+              background-image: url(&quot;https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=700&q=70&quot;);
+            "
+            aria-label="Trips to Manali"
+            ><span><b>Manali</b><small>Mountains and treks</small></span></a
+          >
+          <a
+            class="dest"
+            href="trips.html?q=Goa"
+            style="
+              background-image: url(&quot;https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=700&q=70&quot;);
+            "
+            aria-label="Trips to Goa"
+            ><span><b>Goa</b><small>Beaches and nightlife</small></span></a
+          >
+          <a
+            class="dest"
+            href="trips.html?q=Jaipur"
+            style="
+              background-image: url(&quot;https://images.unsplash.com/photo-1548013146-72479768bada?w=700&q=70&quot;);
+            "
+            aria-label="Trips to Jaipur"
+            ><span><b>Jaipur</b><small>Forts and culture</small></span></a
+          >
+          <a
+            class="dest"
+            href="trips.html?q=Rishikesh"
+            style="
+              background-image: url(&quot;https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=70&quot;);
+            "
+            aria-label="Trips to Rishikesh"
+            ><span><b>Rishikesh</b><small>Rafting and yoga</small></span></a
+          >
+        </div>
+      </section>
+
+      <section class="wrap sec" aria-labelledby="hs">
+        <div class="split">
+          <div class="ph" role="img" aria-label="Friends on a road trip">
+            <div class="float">
+              <div class="seats">
+                <div class="seat on host">VC</div>
+                <div class="seat on">RS</div>
+                <div class="seat on">AK</div>
+                <div class="seat on">MP</div>
+                <div class="seat on">JD</div>
+                <div class="seat on">SN</div>
+                <div class="seat"></div>
+                <div class="seat"></div>
+              </div>
+              <p><b>6 of 8 travelers.</b> 2 spots left.</p>
+            </div>
+          </div>
+          <div>
+            <div class="eyebrow">Build the right squad</div>
+            <h2 id="hs">See who is going, and who is missing</h2>
+            <p class="sub">
+              Every trip shows its squad as a live layout. Open spots, who
+              joined, and where you sit.
+            </p>
+            <ul class="ticks">
+              <li>Request to join, organizer accepts</li>
+              <li>
+                Capacity can never be exceeded, even with simultaneous accepts
+              </li>
+              <li>Accepted members unlock the itinerary, expenses and chat</li>
+            </ul>
+            <a class="btn" style="margin-top: 22px" href="trips.html"
+              >Find a squad</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap sec" aria-labelledby="hc">
+        <div class="pv">
+          <div>
+            <div class="eyebrow">Compare before you book</div>
+            <h2 id="hc">Know what you'll spend</h2>
+            <p class="sub">
+              See where the money goes, then decide if convenience is worth the
+              difference.
+            </p>
+            <ul class="ticks">
+              <li>Self plan and packages side by side</li>
+              <li>A recommendation with the reasons behind it</li>
+              <li>Editable cost breakdown that updates as you type</li>
+              <li>Expenses split fairly once the trip is on</li>
+            </ul>
+          </div>
+          <div
+            class="box"
+            role="group"
+            aria-label="Example comparison for four travelers"
+          >
+            <div class="r best">
+              <span>Self plan<small>Recommended for this group</small></span
+              ><b>&#8377;8,500</b>
+            </div>
+            <div class="r">
+              <span>MakeMyTrip<small>Transport, hotel, breakfast</small></span
+              ><b>&#8377;12,499</b>
+            </div>
+            <div class="r">
+              <span>Kesari<small>All meals, 6 activities</small></span
+              ><b>&#8377;15,999</b>
+            </div>
+            <p class="note">
+              Per person, example only. Demonstration data, not live pricing.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section class="cta2">
+      <h2>Your next trip needs a squad.</h2>
+      <p>Find one, or start your own in a couple of minutes.</p>
+      <a class="btn" href="trips.html">Explore trips</a
+      ><a class="btn ghost" href="register.html">Create account</a>
+    </section>
+
+    <footer class="ft">
+      <div class="cols">
+        <div>
+          <div class="logo">Solo<b>2</b>Squad</div>
+          <p>
+            From solo idea to coordinated trip. Compare, build your squad and
+            travel together.
+          </p>
+        </div>
+        <div>
+          <h4>Product</h4>
+          <a href="trips.html">Discover trips</a
+          ><a href="create-trip.html">Plan a trip</a
+          ><a href="requests.html">My trips</a>
+        </div>
+        <div>
+          <h4>Account</h4>
+          <a href="login.html">Log in</a><a href="register.html">Register</a
+          ><a href="profile.html">Profile</a>
+        </div>
+        <div>
+          <h4>Project</h4>
+          <a href="trips.html?q=Manali">Manali</a
+          ><a href="trips.html?q=Goa">Goa</a
+          ><a href="trips.html?q=Jaipur">Jaipur</a>
+        </div>
+      </div>
+      <div class="base">
+        <span>&copy; 2026 Solo2Squad. Engineering project.</span
+        ><span>Package prices shown are demonstration data.</span>
+      </div>
+    </footer>
+    <script type="module" src="ui.js"></script>
+      <script src="ecosystem.js" defer></script>
+    <script src="holiday.js" defer></script>
+  </body>
+</html>
+

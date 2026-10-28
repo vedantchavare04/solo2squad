@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isCreator(tripId) {
+      return signedIn() && get(/databases/$(database)/documents/trips/$(tripId)).data.createdBy == request.auth.uid;
+    }
+
+    match /users/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+
+    match /trips/{id} {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.createdBy == request.auth.uid
+                    && request.resource.data.memberCount == 1;
+      allow update: if signedIn() && resource.data.createdBy == request.auth.uid
+                    && request.resource.data.createdBy == resource.data.createdBy
+                    && (!('memberCount' in request.resource.data) || request.resource.data.memberCount <= request.resource.data.maxMembers);
+      allow delete: if signedIn() && resource.data.createdBy == request.auth.uid;
+
+      /* Members: any signed-in user can see the squad; only the organizer writes it
+         (the accept transaction runs as the organizer). */
+      match /members/{uid} {
+        allow read: if signedIn();
+        allow create, update, delete: if isCreator(id);
+      }
+
+      function isMember() {
+        return signedIn() && (isCreator(id) || exists(/databases/$(database)/documents/trips/$(id)/members/$(request.auth.uid)));
+      }
+      match /itinerary/{day} {
+        allow read: if isMember();
+        allow write: if isCreator(id);
+      }
+      match /expenses/{eid} {
+        allow read: if isMember();
+        allow create: if isMember() && request.resource.data.paidBy == request.auth.uid && request.resource.data.amount > 0;
+        allow delete: if isMember() && (resource.data.paidBy == request.auth.uid || isCreator(id));
+      }
+    }
+
+    match /notifications/{nid} {
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.fromUid == request.auth.uid;
+      allow update: if signedIn() && resource.data.userId == request.auth.uid
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+    }
+
+    match /joinRequests/{id} {
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.status == "Pending";
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid
+                    || resource.data.tripCreator == request.auth.uid);
+      allow update, delete: if signedIn() && resource.data.tripCreator == request.auth.uid;
+    }
+  }
+}

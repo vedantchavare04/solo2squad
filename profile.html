@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>My Profile - Solo2Squad</title>
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="trip.css" />
+    <link rel="stylesheet" href="ecosystem.css" />
+    <link rel="stylesheet" href="holiday.css" />
+  </head>
+
+  <body class="t">
+    <header class="nav" id="nav"></header>
+
+    <main class="profile-container">
+
+      <div class="profile-header">
+        <div class="profile-avatar"></div>
+
+        <h1 id="profileName">Loading...</h1>
+
+        <p id="profileEmail">Loading email...</p>
+      </div>
+
+      <div class="profile-info">
+
+        <div class="info-box">
+          <span> </span>
+
+          <div>
+            <small> City </small>
+
+            <strong id="profileCity"> Loading... </strong>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <span> </span>
+
+          <div>
+            <small> Trips Created </small>
+
+            <strong id="tripCount"> 0 </strong>
+          </div>
+        </div>
+      </div>
+
+      <section style="text-align: left; margin: 26px 0">
+        <h2 class="section-title">Upcoming trips</h2>
+        <div id="upTrips" class="loading">Loading.</div>
+        <h2 class="section-title">Completed trips</h2>
+        <div id="doneTrips" class="loading">Loading.</div>
+        <h2 class="section-title">Travel preferences</h2>
+        <div class="filters" style="grid-template-columns: 1fr 1fr 1fr">
+          <label
+            >Planning<select id="prefPlan">
+              <option value="diy">I plan everything</option>
+              <option value="help">Help me plan</option>
+              <option value="package">Package</option>
+            </select></label
+          >
+          <label
+            >Comfort<select id="prefComfort">
+              <option value="cheapest">Budget</option>
+              <option value="balanced">Balanced</option>
+              <option value="premium">Premium</option>
+            </select></label
+          >
+          <label
+            >Transport<select id="prefTransport">
+              <option>Bus</option>
+              <option>Train</option>
+              <option>Flight</option>
+              <option>Private vehicle</option>
+            </select></label
+          >
+        </div>
+        <button class="btn" id="savePrefs" type="button">
+          Save preferences
+        </button>
+      </section>
+      <div class="profile-actions">
+        <a href="create-trip.html" class="btn"> Create Trip </a>
+
+        <a href="trips.html" class="btn"> Find Trips </a>
+
+        <a href="requests.html" class="btn"> Join Requests </a>
+
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+      </div>
+    </main>
+
+    <script type="module" src="ui.js"></script>
+    <script type="module" src="profile.js"></script>
+    <script type="module" src="script.js"></script>
+      <script src="ecosystem.js" defer></script>
+    <script src="holiday.js" defer></script>
+  </body>
+</html>
+

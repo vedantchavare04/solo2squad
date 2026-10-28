@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Discover trips - Solo2Squad</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="trip.css" />
+    <link rel="stylesheet" href="ecosystem.css" />
+    <link rel="stylesheet" href="holiday.css" />
+  </head>
+  <body class="t">
+    <header class="nav" id="nav"></header>
+    <main class="page">
+      <h1>Discover trips</h1>
+      <p class="page-description">Find a squad going where you want to go.</p>
+      <div class="filters">
+        <label>Destination<input id="fSearch" placeholder="Manali" /></label>
+        <label
+          >Travel type<select id="fType">
+            <option value="">All</option>
+            <option>Adventure</option>
+            <option>Beach</option>
+            <option>Road Trip</option>
+            <option>Trekking</option>
+            <option>Cultural</option>
+            <option>Relaxation</option>
+          </select></label
+        >
+        <label>From date<input id="fDate" type="date" /></label>
+        <label
+          >Max cost per person<input
+            id="fBudget"
+            type="number"
+            min="0"
+            step="500"
+            placeholder="INR"
+        /></label>
+        <label
+          >Open spots<select id="fSpots">
+            <option value="0">Any</option>
+            <option value="1">1+</option>
+            <option value="2">2+</option>
+            <option value="4">4+</option>
+          </select></label
+        >
+        <label
+          >Sort by<select id="fSort">
+            <option value="soon">Soonest</option>
+            <option value="value">Best value</option>
+            <option value="cost">Lowest cost</option>
+            <option value="spots">Most open spots</option>
+          </select></label
+        >
+      </div>
+      <div class="grid" id="tripList"></div>
+    </main>
+    <script type="module" src="ui.js"></script>
+    <script type="module" src="discover.js"></script>
+      <script src="ecosystem.js" defer></script>
+    <script src="holiday.js" defer></script>
+  </body>
+</html>
+

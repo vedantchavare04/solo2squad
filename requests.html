@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Join Requests - Solo2Squad</title>
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="trip.css" />
+    <link rel="stylesheet" href="ecosystem.css" />
+    <link rel="stylesheet" href="holiday.css" />
+  </head>
+
+  <body class="t">
+    <header class="nav" id="nav"></header>
+
+    <section class="requests-container">
+      <h1>Join Requests</h1>
+
+      <p class="page-description">Manage people who want to join your trips.</p>
+
+      <h2 class="section-title">Requests to join my trips</h2>
+
+      <div id="requestsList">
+        <p class="loading">Loading requests...</p>
+      </div>
+
+      <h2 class="section-title">My requests to other trips</h2>
+
+      <div id="myRequestsList">
+        <p class="loading">Loading your requests...</p>
+      </div>
+    </section>
+
+    <script type="module" src="ui.js"></script>
+    <script type="module" src="script.js"></script>
+      <script src="ecosystem.js" defer></script>
+    <script src="holiday.js" defer></script>
+  </body>
+</html>
+

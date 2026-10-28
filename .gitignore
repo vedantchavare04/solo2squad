@@ -1,0 +1,22 @@
+
+# Dependencies and tool output
+node_modules/
+.wrangler/
+.vercel/
+.firebase/
+
+# Logs
+*.log
+firebase-debug.log
+npm-debug.log*
+
+# Secrets and local config
+.env
+.env.*
+.dev.vars
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

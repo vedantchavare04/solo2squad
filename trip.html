@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trip - Solo2Squad</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+    />
+    <link rel="stylesheet" href="trip.css" />
+    <link rel="stylesheet" href="ecosystem.css" />
+    <link rel="stylesheet" href="holiday.css" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  </head>
+  <body class="t">
+    <header class="nav">
+      <a class="logo" href="index.html">Solo<b>2</b>Squad</a>
+      <nav aria-label="Main">
+        <a class="l" href="trips.html">Discover</a
+        ><a class="l" href="create-trip.html">Plan trip</a
+        ><a class="l" href="requests.html">My trips</a
+        ><a class="l" href="profile.html">Profile</a>
+      </nav>
+    </header>
+
+    <section class="hero" id="hero" aria-label="Trip summary">
+      <div>
+        <div
+          class="skel"
+          style="width: 320px; height: 48px; opacity: 0.3"
+        ></div>
+      </div>
+    </section>
+
+    <main class="wrap">
+      <section class="sec" aria-labelledby="h-compare">
+        <h2 id="h-compare">Compare ways to travel</h2>
+        <p class="sub">
+          Set your group and preferences. Scores are rule-based and explained
+          below.
+        </p>
+        <div class="prefs">
+          <label
+            >Travelers<input
+              id="pTravelers"
+              type="number"
+              min="1"
+              max="20"
+              value="4"
+          /></label>
+          <label
+            >Budget per person (INR)<input
+              id="pBudget"
+              type="number"
+              min="0"
+              step="500"
+              value="10000"
+          /></label>
+          <label
+            >Planning<select id="pPlanning">
+              <option value="diy">I plan everything</option>
+              <option value="help">Help me plan</option>
+              <option value="package">I prefer a package</option>
+            </select></label
+          >
+          <label
+            >Comfort<select id="pComfort">
+              <option value="cheapest">Budget</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="premium">Premium</option>
+            </select></label
+          >
+        </div>
+        <div class="cmp" id="cmp">
+          <div class="skel"></div>
+          <div class="skel"></div>
+          <div class="skel"></div>
+        </div>
+        <div class="why" id="why" hidden></div>
+        <p class="demo">
+          Package data is demonstration data, not live pricing.
+        </p>
+      </section>
+
+      <section class="sec" aria-labelledby="h-cost">
+        <h2 id="h-cost">Self-plan cost</h2>
+        <p class="sub">
+          Edit quantities and unit costs. Totals update as you type.
+        </p>
+        <div class="calc">
+          <div id="rows"></div>
+          <div>
+            <div class="tot" id="tot">-</div>
+            <div class="sub" id="totSub"></div>
+            <div class="bar" id="bar" aria-hidden="true"></div>
+            <div id="legendCost" class="legend" style="flex-wrap: wrap"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" aria-labelledby="h-squad">
+        <h2 id="h-squad">Squad</h2>
+        <p class="sub" id="squadSub">Loading squad.</p>
+        <div id="seats" class="seats" role="list">
+          <div class="skel" style="grid-column: 1/-1; width: 200px"></div>
+        </div>
+        <div class="legend">
+          <span>Filled: member</span><span>Orange: organizer</span
+          ><span>Dashed: open</span>
+        </div>
+        <div class="tip" id="tip" aria-live="polite"></div>
+      </section>
+      <section class="sec" aria-labelledby="h-near">
+        <h2 id="h-near">Nearby</h2>
+        <p class="sub" id="nearSub">
+          Hospitals, pharmacies, hotels and lesser-known places around the
+          destination.
+        </p>
+        <div id="nearBest"></div>
+        <div class="near-bar">
+          <div role="tablist" aria-label="Place type" id="nearTabs"></div>
+          <span class="near-ctl"
+            ><button
+              class="btn ghost"
+              id="nearLoc"
+              type="button"
+              style="padding: 7px 14px"
+            >
+              Use my location
+            </button>
+            <label
+              >Radius<select id="nearR">
+                <option value="2000">2 km</option>
+                <option value="5000" selected>5 km</option>
+                <option value="10000">10 km</option>
+                <option value="20000">20 km</option>
+              </select></label
+            ></span
+          >
+        </div>
+        <p
+          class="small-note"
+          id="nearMode"
+          role="status"
+          style="margin: -8px 0 14px"
+        ></p>
+        <div class="near">
+          <div id="nearList" aria-live="polite"><div class="skel"></div></div>
+          <div id="nearMap" aria-label="Map of nearby places"></div>
+        </div>
+        <p class="demo">
+          Data from OpenStreetMap contributors. Coverage varies by area, so call
+          to confirm hours. Emergency: dial 112, ambulance 108. Hidden places
+          are named viewpoints, waterfalls, peaks and historic sites without a
+          Wikipedia entry.
+        </p>
+      </section>
+    </main>
+
+    <dialog id="joinDlg" aria-labelledby="jt">
+      <h3 id="jt">Request to join</h3>
+      <div id="joinBody"></div>
+      <div class="btns">
+        <button class="btn ghost" id="jCancel">Cancel</button
+        ><button class="btn" id="jSend">Request to join</button>
+      </div>
+    </dialog>
+    <div id="extras" hidden>
+      <section class="sec wrap" aria-labelledby="h-it">
+        <h2 id="h-it">Itinerary</h2>
+        <p class="sub">Shared plan. The organizer edits, members read.</p>
+        <div id="itinList"></div>
+        <form id="itinForm" class="prefs" style="margin-top: 18px" hidden>
+          <label>Day<input name="day" type="number" min="1" value="1" /></label
+          ><label>Time<input name="time" type="time" /></label
+          ><label>Location<input name="location" required /></label>
+          <label>Activity<input name="activity" required /></label
+          ><label>Notes<input name="notes" /></label
+          ><label>Cost (INR)<input name="cost" type="number" min="0" /></label>
+          <label
+            >&nbsp;<button class="btn" type="submit">Add stop</button></label
+          >
+        </form>
+      </section>
+      <section class="sec wrap" aria-labelledby="h-ex">
+        <h2 id="h-ex">Expenses</h2>
+        <p class="sub">Costs are split equally between squad members.</p>
+        <div class="calc">
+          <div><div id="expSummary"></div></div>
+          <div>
+            <div id="expList"></div>
+            <form id="expForm" class="prefs" style="margin-top: 14px">
+              <label>What for<input name="label" required /></label
+              ><label
+                >Amount (INR)<input
+                  name="amount"
+                  type="number"
+                  min="1"
+                  required /></label
+              ><label
+                >&nbsp;<button class="btn" type="submit">
+                  Record payment
+                </button></label
+              >
+            </form>
+          </div>
+        </div>
+      </section>
+      <section class="sec wrap" aria-labelledby="h-ch">
+        <h2 id="h-ch">
+          Group chat <span class="badge" id="online">Connecting</span>
+          <button
+            class="btn ghost"
+            id="memBtn"
+            type="button"
+            style="float: right; padding: 6px 12px"
+          >
+            Members
+          </button>
+        </h2>
+        <p class="sub">Private to this squad.</p>
+        <div id="chatLog" class="chat" aria-live="polite"></div>
+        <form id="chatForm" class="chatbar">
+          <label class="sr" for="chatInput">Message</label
+          ><input
+            id="chatInput"
+            autocomplete="off"
+            maxlength="1000"
+            placeholder="Write a message"
+          /><button class="btn" type="submit">Send</button>
+        </form>
+      </section>
+    </div>
+    <dialog id="editDlg" aria-labelledby="et">
+      <h3 id="et">Edit trip</h3>
+      <form id="editForm">
+        <label>Trip name<input name="tripName" required /></label
+        ><label>Date<input name="tripDate" type="date" required /></label>
+        <label
+          >Maximum members<input
+            name="maxMembers"
+            type="number"
+            min="2"
+            max="20"
+            required /></label
+        ><label
+          >Description<textarea name="description" rows="3"></textarea>
+        </label>
+        <div class="btns">
+          <button type="button" class="btn ghost" id="editCancel">Cancel</button
+          ><button class="btn" type="submit">Save</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="confirmDlg" aria-labelledby="ct">
+      <h3 id="ct">Delete this trip?</h3>
+      <p class="sub">
+        The squad, itinerary and join requests are removed. This cannot be
+        undone.
+      </p>
+      <div class="btns">
+        <button class="btn ghost" id="confCancel">Cancel</button
+        ><button class="btn" id="confDelete">Delete trip</button>
+      </div>
+    </dialog>
+    <dialog id="memDlg" aria-labelledby="mt">
+      <h3 id="mt">Squad members</h3>
+      <div id="memList"></div>
+      <div class="btns">
+        <button class="btn ghost" onclick="this.closest('dialog').close()">
+          Close
+        </button>
+      </div>
+    </dialog>
+    <div id="toasts" role="status" aria-live="polite"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script type="module" src="trip.js"></script>
+    <script type="module" src="nearby-ui.js"></script>
+    <script type="module" src="trip-extras.js"></script>
+      <script src="ecosystem.js" defer></script>
+    <script src="holiday.js" defer></script>
+  </body>
+</html>
+
