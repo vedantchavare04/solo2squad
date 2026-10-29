@@ -1,6 +1,7 @@
 /* Cloudflare Worker + Durable Object: one chat room per trip (room id = trip_{tripId}).
    Firebase stays the source of truth for identity and membership; this only relays messages. */
-const PROJECT = "solo2squad-a498f";
+// Keep this identical to firebase.js (firebaseConfig.projectId).
+const PROJECT = "solo2squad-b1c6c";
 const JWK_URL =
   "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com";
 const FS = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
@@ -142,11 +143,24 @@ async function nearby(url, ctx) {
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "Authorization,Content-Type",
+  "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+  "Access-Control-Max-Age": "86400",
 };
 export default {
   async fetch(req, env, ctx) {
-    if (req.method === "OPTIONS") return new Response(null, { headers: CORS });
     const url = new URL(req.url);
+    if (req.method === "OPTIONS")
+      return new Response(null, { status: 204, headers: CORS });
+    if (url.pathname === "/" || url.pathname === "/health")
+      return Response.json(
+        { service: "Solo2Squad chat", status: "ok" },
+        { headers: { ...CORS, "Cache-Control": "no-store" } },
+      );
+    if (req.method !== "GET" && req.method !== "POST")
+      return new Response("Method not allowed", {
+        status: 405,
+        headers: { ...CORS, Allow: "GET, POST, OPTIONS" },
+      });
     if (url.pathname === "/nearby") return nearby(url, ctx);
     const m = url.pathname.match(/^\/chat\/([A-Za-z0-9_-]+)(\/system)?$/);
     if (!m) return new Response("Not found", { status: 404 });

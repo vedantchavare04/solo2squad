@@ -1,0 +1,1 @@
+This folder contains the built output assets for the worker "solo2squad-chat" generated at 2026-10-29T09:26:32.287Z.

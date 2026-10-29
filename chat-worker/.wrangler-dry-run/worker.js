@@ -1,0 +1,257 @@
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
+
+// worker.js
+var PROJECT = "solo2squad-b1c6c";
+var JWK_URL = "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com";
+var FS = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
+var b64 = /* @__PURE__ */ __name((s) => Uint8Array.from(
+  atob(s.replace(/-/g, "+").replace(/_/g, "/")),
+  (c) => c.charCodeAt(0)
+), "b64");
+var part = /* @__PURE__ */ __name((s) => JSON.parse(new TextDecoder().decode(b64(s))), "part");
+async function verifyToken(token) {
+  try {
+    const [h, p, sig] = token.split(".");
+    const header = part(h), payload = part(p), now = Date.now() / 1e3;
+    if (payload.aud !== PROJECT || payload.iss !== `https://securetoken.google.com/${PROJECT}` || payload.exp < now || !payload.sub)
+      return null;
+    const { keys } = await (await fetch(JWK_URL, { cf: { cacheTtl: 3600 } })).json();
+    const jwk = keys.find((k) => k.kid === header.kid);
+    if (!jwk) return null;
+    const key = await crypto.subtle.importKey(
+      "jwk",
+      jwk,
+      { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+      false,
+      ["verify"]
+    );
+    const ok = await crypto.subtle.verify(
+      "RSASSA-PKCS1-v1_5",
+      key,
+      b64(sig),
+      new TextEncoder().encode(`${h}.${p}`)
+    );
+    return ok ? { uid: payload.sub, name: payload.name || payload.email || "Traveler" } : null;
+  } catch {
+    return null;
+  }
+}
+__name(verifyToken, "verifyToken");
+async function isMember(tripId, uid, token) {
+  const get = /* @__PURE__ */ __name((path) => fetch(`${FS}/${path}`, { headers: { Authorization: `Bearer ${token}` } }), "get");
+  const m = await get(`trips/${tripId}/members/${uid}`);
+  if (m.ok) return true;
+  const t = await get(`trips/${tripId}`);
+  return t.ok && (await t.json()).fields?.createdBy?.stringValue === uid;
+}
+__name(isMember, "isMember");
+var MIRRORS = [
+  "https://overpass-api.de/api/interpreter",
+  "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+  "https://overpass.private.coffee/api/interpreter"
+];
+var overpassQuery = /* @__PURE__ */ __name((lat, lon, r) => {
+  const a = `(around:${r},${lat},${lon})`, lo = '[!"wikipedia"][!"wikidata"]["name"]';
+  return `[out:json][timeout:20];(
+       nwr["amenity"~"^(hospital|clinic)$"]${a};
+       nwr["amenity"="pharmacy"]${a};
+       nwr["tourism"~"^(hotel|guest_house|hostel)$"]["name"]${a};
+       nwr["tourism"="viewpoint"]${lo}${a};
+       nwr["natural"~"^(waterfall|peak|hot_spring|cave_entrance)$"]${lo}${a};
+       nwr["historic"]${lo}${a};
+     );out center 150;`;
+}, "overpassQuery");
+async function nearby(url, ctx) {
+  const lat = +url.searchParams.get("lat"), lon = +url.searchParams.get("lon"), r = Math.min(+url.searchParams.get("r") || 5e3, 2e4);
+  if (!isFinite(lat) || !isFinite(lon))
+    return new Response("Bad request", { status: 400, headers: CORS });
+  const key = new Request(
+    `https://cache.local/nearby/${lat.toFixed(3)}/${lon.toFixed(3)}/${r}`
+  ), cache = caches.default;
+  const hit = await cache.match(key);
+  if (hit) return hit;
+  const body = "data=" + encodeURIComponent(overpassQuery(lat, lon, r)), tried = [];
+  for (let round = 0; round < 2; round++) {
+    if (round) await new Promise((s) => setTimeout(s, 1500));
+    for (const m of MIRRORS) {
+      try {
+        const res = await fetch(m, {
+          method: "POST",
+          body,
+          signal: AbortSignal.timeout(2e4),
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": "Solo2Squad/1.0 (+https://solo2squad-phi.vercel.app)"
+          }
+        });
+        if (!res.ok) {
+          tried.push(`${new URL(m).host}:${res.status}`);
+          continue;
+        }
+        const text = await res.text();
+        try {
+          JSON.parse(text);
+        } catch {
+          tried.push(`${new URL(m).host}:bad-json`);
+          continue;
+        }
+        const out = new Response(text, {
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "public, max-age=21600",
+            ...CORS
+          }
+        });
+        ctx.waitUntil(cache.put(key, out.clone()));
+        return out;
+      } catch (e) {
+        tried.push(`${new URL(m).host}:${e.name}`);
+      }
+    }
+  }
+  return new Response(JSON.stringify({ error: "busy", tried }), {
+    status: 503,
+    headers: { "Content-Type": "application/json", ...CORS }
+  });
+}
+__name(nearby, "nearby");
+var CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Authorization,Content-Type",
+  "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+  "Access-Control-Max-Age": "86400"
+};
+var worker_default = {
+  async fetch(req, env, ctx) {
+    const url = new URL(req.url);
+    if (req.method === "OPTIONS")
+      return new Response(null, { status: 204, headers: CORS });
+    if (url.pathname === "/" || url.pathname === "/health")
+      return Response.json(
+        { service: "Solo2Squad chat", status: "ok" },
+        { headers: { ...CORS, "Cache-Control": "no-store" } }
+      );
+    if (req.method !== "GET" && req.method !== "POST")
+      return new Response("Method not allowed", {
+        status: 405,
+        headers: { ...CORS, Allow: "GET, POST, OPTIONS" }
+      });
+    if (url.pathname === "/nearby") return nearby(url, ctx);
+    const m = url.pathname.match(/^\/chat\/([A-Za-z0-9_-]+)(\/system)?$/);
+    if (!m) return new Response("Not found", { status: 404 });
+    const sys = !!m[2];
+    const token = sys ? (req.headers.get("Authorization") || "").replace("Bearer ", "") : url.searchParams.get("token") || "";
+    const user = await verifyToken(token);
+    if (!user)
+      return new Response("Unauthorized", { status: 401, headers: CORS });
+    const stub = env.ROOMS.get(env.ROOMS.idFromName("trip_" + m[1]));
+    if (sys) {
+      const t = await fetch(`${FS}/trips/${m[1]}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!t.ok || (await t.json()).fields?.createdBy?.stringValue !== user.uid)
+        return new Response("Forbidden", { status: 403, headers: CORS });
+      const text = String((await req.json()).text || "").slice(0, 200);
+      await stub.fetch("https://room/system", {
+        method: "POST",
+        body: JSON.stringify({ text }),
+        headers: { "x-system": "1" }
+      });
+      return new Response("ok", { headers: CORS });
+    }
+    if (req.headers.get("Upgrade") !== "websocket")
+      return new Response("Expected websocket", { status: 426 });
+    if (!await isMember(m[1], user.uid, token))
+      return new Response("Forbidden", { status: 403 });
+    return stub.fetch(
+      new Request(req, {
+        headers: new Headers({
+          ...Object.fromEntries(req.headers),
+          "x-uid": user.uid,
+          "x-name": encodeURIComponent(user.name)
+        })
+      })
+    );
+  }
+};
+var ChatRoom = class {
+  static {
+    __name(this, "ChatRoom");
+  }
+  constructor(state) {
+    this.state = state;
+  }
+  online() {
+    return new Set(
+      this.state.getWebSockets().map((w) => w.deserializeAttachment()?.uid)
+    ).size;
+  }
+  broadcast(obj) {
+    const s = JSON.stringify(obj);
+    this.state.getWebSockets().forEach((w) => {
+      try {
+        w.send(s);
+      } catch {
+      }
+    });
+  }
+  async fetch(req) {
+    if (req.headers.get("x-system")) {
+      const { text } = await req.json(), msg = { type: "message", system: true, text, ts: Date.now() };
+      await this.state.storage.put(
+        "log",
+        (await this.state.storage.get("log") || []).concat(msg).slice(-100)
+      );
+      this.broadcast(msg);
+      return new Response("ok");
+    }
+    const pair = new WebSocketPair(), [client, server] = Object.values(pair);
+    const user = {
+      uid: req.headers.get("x-uid"),
+      name: decodeURIComponent(req.headers.get("x-name"))
+    };
+    this.state.acceptWebSocket(server);
+    server.serializeAttachment(user);
+    server.send(
+      JSON.stringify({
+        type: "history",
+        messages: await this.state.storage.get("log") || []
+      })
+    );
+    this.broadcast({ type: "presence", online: this.online() });
+    return new Response(null, { status: 101, webSocket: client });
+  }
+  async webSocketMessage(ws, data) {
+    const user = ws.deserializeAttachment();
+    let text;
+    try {
+      text = String(JSON.parse(data).text || "").trim().slice(0, 1e3);
+    } catch {
+      return;
+    }
+    if (!text) return;
+    const msg = {
+      type: "message",
+      uid: user.uid,
+      name: user.name,
+      text,
+      ts: Date.now()
+    };
+    const log = (await this.state.storage.get("log") || []).concat(msg).slice(-100);
+    await this.state.storage.put("log", log);
+    this.broadcast(msg);
+  }
+  async webSocketClose(ws) {
+    ws.close();
+    this.broadcast({
+      type: "presence",
+      online: Math.max(0, this.online() - 1)
+    });
+  }
+};
+export {
+  ChatRoom,
+  worker_default as default
+};
+//# sourceMappingURL=worker.js.map
